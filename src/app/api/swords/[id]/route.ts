@@ -11,17 +11,18 @@ const swordSchema = z.object({
   craftsman: z.string().min(1),
   era: z.string().min(1),
   image: z.string().url(),
-  specifications: z.record(z.string()),
+  specifications: z.any(), // JSON type for Prisma
   available: z.boolean().optional(),
 });
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const sword = await prisma.sword.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!sword) {
@@ -43,7 +44,7 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // TODO: Add authentication check
@@ -56,12 +57,16 @@ export async function PUT(
       );
     }
 
+    const { id } = await params;
     const body = await request.json();
     const validated = swordSchema.parse(body);
 
     const sword = await prisma.sword.update({
-      where: { id: params.id },
-      data: validated,
+      where: { id },
+      data: {
+        ...validated,
+        specifications: validated.specifications as any, // Ensure JSON type
+      },
     });
 
     return NextResponse.json(sword);
@@ -69,7 +74,7 @@ export async function PUT(
     console.error('Sword update error:', error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid sword data', details: error.errors },
+        { error: 'Invalid sword data', details: error.issues },
         { status: 400 }
       );
     }
@@ -82,7 +87,7 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // TODO: Add authentication check
@@ -95,8 +100,9 @@ export async function DELETE(
       );
     }
 
+    const { id } = await params;
     await prisma.sword.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json(

@@ -3,12 +3,12 @@ import { prisma } from '@/lib/prisma';
 import { z } from 'zod';
 
 const querySchema = z.object({
-  page: z.string().optional().transform(Number).default('1'),
-  limit: z.string().optional().transform(Number).default('10'),
+  page: z.string().default('1').transform(Number),
+  limit: z.string().default('10').transform(Number),
   category: z.enum(['KATANA', 'WAKIZASHI', 'TANTO']).optional(),
   search: z.string().optional(),
-  sortBy: z.enum(['price', 'createdAt']).optional().default('createdAt'),
-  order: z.enum(['asc', 'desc']).optional().default('desc'),
+  sortBy: z.enum(['price', 'createdAt']).default('createdAt'),
+  order: z.enum(['asc', 'desc']).default('desc'),
 });
 
 export async function GET(request: Request) {
@@ -23,9 +23,9 @@ export async function GET(request: Request) {
       ...(category && { category }),
       ...(search && {
         OR: [
-          { name: { contains: search, mode: 'insensitive' } },
-          { nameJapanese: { contains: search, mode: 'insensitive' } },
-          { description: { contains: search, mode: 'insensitive' } },
+          { name: { contains: search, mode: 'insensitive' as const } },
+          { nameJapanese: { contains: search, mode: 'insensitive' as const } },
+          { description: { contains: search, mode: 'insensitive' as const } },
         ],
       }),
     };

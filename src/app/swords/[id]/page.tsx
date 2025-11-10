@@ -3,12 +3,13 @@ import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 
 interface Props {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
   const sword = await prisma.sword.findUnique({
-    where: { id: params.id }
+    where: { id }
   });
 
   if (!sword) {
@@ -88,8 +89,9 @@ function generateJsonLd(sword: any) {
 }
 
 export default async function SwordPage({ params }: Props) {
+  const { id } = await params;
   const sword = await prisma.sword.findUnique({
-    where: { id: params.id }
+    where: { id }
   });
 
   if (!sword) {
