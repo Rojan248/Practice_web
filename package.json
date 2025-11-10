@@ -13,6 +13,8 @@
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
     "prisma:migrate": "prisma migrate deploy",
+    "postdeploy": "prisma migrate deploy",
+    "postdeploy:seed": "prisma migrate deploy && npm run db:seed",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
