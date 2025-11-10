@@ -20,7 +20,7 @@ model User {
 }
 
 model Sword {
-  id             String   @id @default(cuid())
+  id             String    @id @default(cuid())
   name           String
   nameJapanese   String
   category       Category
@@ -30,9 +30,10 @@ model Sword {
   era            String
   image          String
   specifications Json
-  available      Boolean  @default(true)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  available      Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  inquiries      Inquiry[]
 }
 
 model Inquiry {
@@ -40,6 +41,7 @@ model Inquiry {
   userId    String
   user      User     @relation(fields: [userId], references: [id])
   swordId   String?
+  sword     Sword?   @relation(fields: [swordId], references: [id])
   interest  Interest
   message   String
   status    Status   @default(PENDING)

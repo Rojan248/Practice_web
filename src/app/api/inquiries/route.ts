@@ -37,7 +37,7 @@ export async function POST(request: Request) {
     console.error('Inquiry creation error:', error);
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid inquiry data', details: error.format() },
+        { error: 'Invalid inquiry data', details: error.issues },
         { status: 400 }
       );
     }
