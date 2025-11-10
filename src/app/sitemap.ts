@@ -2,15 +2,23 @@ import { MetadataRoute } from 'next';
 import { prisma } from '@/lib/prisma';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://yourwebsite.com';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://yourwebsite.com';
 
-  // Fetch all swords
-  const swords = await prisma.sword.findMany({
-    select: {
-      id: true,
-      updatedAt: true,
-    },
-  });
+  // Fetch all swords (handle case where DATABASE_URL might not be set during build)
+  let swords: { id: string; updatedAt: Date }[] = [];
+  try {
+    if (process.env.DATABASE_URL) {
+      swords = await prisma.sword.findMany({
+        select: {
+          id: true,
+          updatedAt: true,
+        },
+      });
+    }
+  } catch (error) {
+    // If database is not available during build, continue without sword routes
+    console.warn('Database not available during sitemap generation:', error);
+  }
 
   // Static routes
   const routes = [
