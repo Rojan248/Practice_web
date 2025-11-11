@@ -1,304 +1,174 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
-import { cn } from '@/lib/utils';
-import type { Sword, SwordCategory } from '@/types';
-import SwordModal from './SwordModal';
+import Image from 'next/image'
+import { useState } from 'react'
 
-// ============================================================================
-// Mock Data
-// ============================================================================
-
-const mockSwords: Sword[] = [
+const ALL_SWORDS = [
+  // Katanas
   {
-    id: '1',
-    name: 'Dragon\'s Breath',
-    nameJapanese: '龍の息吹',
+    id: 'kat-1',
+    name: "Dragon's Breath",
     category: 'katana',
-    price: 12500,
-    image: '/swords/katana-1.jpg',
-    description: 'A masterfully crafted katana with a dragon-themed hamon pattern. This blade represents the pinnacle of traditional Japanese sword making, combining centuries-old techniques with exceptional artistry.',
-    craftsman: 'Master Yoshida',
-    era: 'Edo Period',
+    price: 8500,
+    image: '/images/hero/katana-1.jpg',
   },
   {
-    id: '2',
-    name: 'Moonlight Serenity',
-    nameJapanese: '月光の静けさ',
+    id: 'kat-2',
+    name: 'Blue Elegance',
+    category: 'katana',
+    price: 7200,
+    image: '/images/hero/katana-2.jpg',
+  },
+  {
+    id: 'kat-3',
+    name: 'Burgundy Luxury',
     category: 'katana',
     price: 9800,
-    image: '/swords/katana-2.jpg',
-    description: 'Elegant katana with a subtle moonlight-inspired hamon. The blade reflects light beautifully, creating an ethereal appearance that captivates collectors and enthusiasts alike.',
-    craftsman: 'Master Tanaka',
-    era: 'Meiji Period',
+    image: '/images/hero/katana-3.jpg',
   },
   {
-    id: '3',
-    name: 'Thunder Strike',
-    nameJapanese: '雷の一撃',
+    id: 'kat-4',
+    name: 'Ancient Warrior',
     category: 'katana',
-    price: 15200,
-    image: '/swords/katana-3.jpg',
-    description: 'Powerful katana with a dramatic lightning-patterned hamon. This blade embodies strength and precision, crafted for the most discerning collectors.',
-    craftsman: 'Master Suzuki',
-    era: 'Edo Period',
-  },
-  {
-    id: '4',
-    name: 'Cherry Blossom',
-    nameJapanese: '桜の花',
-    category: 'katana',
-    price: 11200,
-    image: '/swords/katana-4.jpg',
-    description: 'Delicate katana featuring a cherry blossom hamon pattern. A beautiful representation of Japanese aesthetics and craftsmanship.',
-    craftsman: 'Master Yamamoto',
-    era: 'Meiji Period',
-  },
-  {
-    id: '5',
-    name: 'Shadow Walker',
-    nameJapanese: '影の歩行者',
-    category: 'wakizashi',
-    price: 6800,
-    image: '/swords/wakizashi-1.jpg',
-    description: 'Elegant wakizashi with a dark, mysterious aesthetic. Perfect companion blade with exceptional balance and cutting performance.',
-    craftsman: 'Master Kobayashi',
-    era: 'Edo Period',
-  },
-  {
-    id: '6',
-    name: 'Wind Chaser',
-    nameJapanese: '風の追跡者',
-    category: 'wakizashi',
-    price: 7200,
-    image: '/swords/wakizashi-2.jpg',
-    description: 'Lightweight wakizashi with exceptional handling. The blade moves like wind, offering unparalleled speed and precision.',
-    craftsman: 'Master Watanabe',
-    era: 'Meiji Period',
-  },
-  {
-    id: '7',
-    name: 'Silent Guardian',
-    nameJapanese: '静かな守護者',
-    category: 'wakizashi',
     price: 6500,
-    image: '/swords/wakizashi-3.jpg',
-    description: 'Compact wakizashi designed for close-quarters combat. A reliable companion blade with traditional aesthetics.',
-    craftsman: 'Master Nakamura',
-    era: 'Edo Period',
+    image: '/images/hero/katana-4.jpg',
   },
+  // Wakizashis
   {
-    id: '8',
-    name: 'Flame Dancer',
-    nameJapanese: '炎の舞踊者',
+    id: 'wak-1',
+    name: 'White Silk',
     category: 'wakizashi',
-    price: 7500,
-    image: '/swords/wakizashi-4.jpg',
-    description: 'Dynamic wakizashi with a flame-patterned hamon. The blade dances with light, creating a mesmerizing visual effect.',
-    craftsman: 'Master Ito',
-    era: 'Meiji Period',
+    price: 4200,
+    image: '/images/hero/wakizashi-1.jpg',
   },
   {
-    id: '9',
-    name: 'Hidden Blade',
-    nameJapanese: '隠された刃',
+    id: 'wak-2',
+    name: 'Crimson Samurai',
+    category: 'wakizashi',
+    price: 4800,
+    image: '/images/hero/wakizashi-2.jpg',
+  },
+  {
+    id: 'wak-3',
+    name: 'Battle Worn',
+    category: 'wakizashi',
+    price: 3900,
+    image: '/images/hero/wakizashi-3.jpg',
+  },
+  {
+    id: 'wak-4',
+    name: 'Ceremonial Gold',
+    category: 'wakizashi',
+    price: 5500,
+    image: '/images/hero/wakizashi-4.jpg',
+  },
+  // Tantos
+  {
+    id: 'tan-1',
+    name: 'Black Silk Tanto',
+    category: 'tanto',
+    price: 2200,
+    image: '/images/hero/tanto-1.jpg',
+  },
+  {
+    id: 'tan-2',
+    name: 'Combat Tanto',
+    category: 'tanto',
+    price: 1900,
+    image: '/images/hero/tanto-2.jpg',
+  },
+  {
+    id: 'tan-3',
+    name: 'Luxury Ceremonial',
     category: 'tanto',
     price: 3200,
-    image: '/swords/tanto-1.jpg',
-    description: 'Compact tanto with exceptional sharpness. A perfect utility blade for everyday tasks and collection display.',
-    craftsman: 'Master Saito',
-    era: 'Edo Period',
+    image: '/images/hero/tanto-3.jpg',
   },
   {
-    id: '10',
-    name: 'Dawn\'s Edge',
-    nameJapanese: '夜明けの刃',
+    id: 'tan-4',
+    name: 'Traditional Red',
     category: 'tanto',
-    price: 3800,
-    image: '/swords/tanto-2.jpg',
-    description: 'Beautiful tanto with a dawn-inspired hamon pattern. The blade captures the essence of morning light.',
-    craftsman: 'Master Kato',
-    era: 'Meiji Period',
+    price: 2500,
+    image: '/images/hero/tanto-4.jpg',
   },
-  {
-    id: '11',
-    name: 'Precision Point',
-    nameJapanese: '精密な先端',
-    category: 'tanto',
-    price: 3500,
-    image: '/swords/tanto-3.jpg',
-    description: 'Razor-sharp tanto with exceptional point geometry. Designed for precision cutting and detailed work.',
-    craftsman: 'Master Matsumoto',
-    era: 'Edo Period',
-  },
-  {
-    id: '12',
-    name: 'Eternal Flame',
-    nameJapanese: '永遠の炎',
-    category: 'tanto',
-    price: 4200,
-    image: '/swords/tanto-4.jpg',
-    description: 'Exquisite tanto with a flame-patterned hamon. A small but powerful blade that commands attention.',
-    craftsman: 'Master Hayashi',
-    era: 'Meiji Period',
-  },
-];
-
-// ============================================================================
-// SwordGallery Component
-// ============================================================================
+]
 
 export default function SwordGallery() {
-  const [selectedCategory, setSelectedCategory] = useState<SwordCategory | 'all'>('all');
-  const [selectedSword, setSelectedSword] = useState<Sword | null>(null);
+  const [filter, setFilter] = useState('all')
 
-  const categories: Array<{ label: string; value: SwordCategory | 'all' }> = [
-    { label: 'All', value: 'all' },
-    { label: 'Katana', value: 'katana' },
-    { label: 'Wakizashi', value: 'wakizashi' },
-    { label: 'Tanto', value: 'tanto' },
-  ];
-
-  const filteredSwords = selectedCategory === 'all'
-    ? mockSwords
-    : mockSwords.filter((sword) => sword.category === selectedCategory);
-
-  const formatPrice = (price: number): string => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-    }).format(price);
-  };
+  const filteredSwords =
+    filter === 'all'
+      ? ALL_SWORDS
+      : ALL_SWORDS.filter((sword) => sword.category === filter)
 
   return (
-    <section 
-      className="py-20 px-4 sm:px-6 lg:px-8" 
-      style={{
-        backgroundImage: "url('/images/hero/background-2.jpg')",
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-      }}
-    >
-      {/* Background Overlay for Text Readability */}
-      <div className="absolute inset-0 bg-black/60" aria-hidden="true" />
-      <div className="container mx-auto max-w-7xl relative z-10">
-        {/* Section Header */}
+    <section className="bg-black py-20">
+      <div className="container mx-auto px-4">
+        {/* Title */}
         <div className="mb-12 text-center">
-          <h2 className="font-heading mb-4 text-5xl font-bold text-white">
-            Our Collection
-          </h2>
-          <p className="font-body text-lg text-white/70">
-            Discover the artistry of traditional Japanese swords
+          <h2 className="text-5xl font-bold text-[#FFD700]">Our Collection</h2>
+          <p className="mt-2 text-lg text-white/70">
+            Handcrafted blades for the modern collector
           </p>
         </div>
 
         {/* Filter Buttons */}
-        <div className="mb-12 flex flex-wrap justify-center gap-4">
-          {categories.map((category) => (
-            <button
-              key={category.value}
-              onClick={() => setSelectedCategory(category.value)}
-              className={cn(
-                'px-6 py-3 font-body text-sm uppercase tracking-wider transition-all duration-300',
-                'border rounded-lg',
-                'focus-visible:outline-2 focus-visible:outline-[#FFD700] focus-visible:outline-offset-2',
-                selectedCategory === category.value
-                  ? 'border-[#FFD700] bg-[#FFD700]/10 text-[#FFD700]'
-                  : 'border-white/20 bg-white/5 text-white/70 hover:border-white/40 hover:text-white'
-              )}
-              aria-pressed={selectedCategory === category.value}
-            >
-              {category.label}
-            </button>
-          ))}
+        <div className="mb-12 flex justify-center gap-4">
+          <button
+            onClick={() => setFilter('all')}
+            className={`px-4 py-2 text-sm font-semibold rounded-md transition ${
+              filter === 'all' ? 'bg-[#FFD700] text-black' : 'bg-[#1A1A1A] text-white/70'
+            }`}
+          >
+            All
+          </button>
+          <button
+            onClick={() => setFilter('katana')}
+            className={`px-4 py-2 text-sm font-semibold rounded-md transition ${
+              filter === 'katana' ? 'bg-[#FFD700] text-black' : 'bg-[#1A1A1A] text-white/70'
+            }`}
+          >
+            Katanas
+          </button>
+          <button
+            onClick={() => setFilter('wakizashi')}
+            className={`px-4 py-2 text-sm font-semibold rounded-md transition ${
+              filter === 'wakizashi' ? 'bg-[#FFD700] text-black' : 'bg-[#1A1A1A] text-white/70'
+            }`}
+          >
+            Wakizashis
+          </button>
+          <button
+            onClick={() => setFilter('tanto')}
+            className={`px-4 py-2 text-sm font-semibold rounded-md transition ${
+              filter === 'tanto' ? 'bg-[#FFD700] text-black' : 'bg-[#1A1A1A] text-white/70'
+            }`}
+          >
+            Tantos
+          </button>
         </div>
 
-        {/* Grid Layout */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={selectedCategory}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3"
-            style={{
-              gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-            }}
-          >
-            {filteredSwords.map((sword) => (
-              <motion.div
-                key={sword.id}
-                layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.3 }}
-                whileHover={{ scale: 1.03 }}
-                className="group cursor-pointer"
-                onClick={() => setSelectedSword(sword)}
-              >
-                <div
-                  className={cn(
-                    'relative overflow-hidden rounded-lg border transition-all duration-300',
-                    'bg-[#1A1A1A]',
-                    'group-hover:border-[#FFD700]/50',
-                    'group-hover:shadow-[0_0_20px_rgba(255,215,0,0.2)]'
-                  )}
-                  style={{ aspectRatio: '3/4' }}
-                >
-                  {/* Image */}
-                  <div className="relative h-3/4 w-full overflow-hidden">
-                    <Image
-                      src={sword.image}
-                      alt={`${sword.name} - ${sword.nameJapanese}`}
-                      fill
-                      loading="lazy"
-                      className="object-cover transition-transform duration-300 group-hover:scale-110"
-                      style={{ willChange: 'transform' }}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  </div>
-
-                  {/* Content */}
-                  <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <h3 className="font-heading mb-2 text-2xl font-bold text-white">
-                      {sword.name}
-                    </h3>
-                    <p className="font-japanese mb-3 text-base text-white/80">
-                      {sword.nameJapanese}
-                    </p>
-                    <p className="font-body text-lg font-semibold text-[#FFD700]">
-                      {formatPrice(sword.price)}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Empty State */}
-        {filteredSwords.length === 0 && (
-          <div className="py-20 text-center">
-            <p className="font-body text-lg text-white/70">
-              No swords found in this category.
-            </p>
-          </div>
-        )}
+        {/* Gallery Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          {filteredSwords.map((sword) => (
+            <div key={sword.id} className="group cursor-pointer">
+              <div className="relative aspect-[3/4] overflow-hidden rounded-lg bg-[#1A1A1A]">
+                <Image
+                  src={sword.image}
+                  alt={sword.name}
+                  fill
+                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                />
+              </div>
+              <div className="mt-4">
+                <h3 className="text-xl font-bold text-white">{sword.name}</h3>
+                <p className="text-lg font-semibold text-[#FFD700]">${sword.price}</p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-
-      {/* Modal */}
-      {selectedSword && (
-        <SwordModal
-          sword={selectedSword}
-          onClose={() => setSelectedSword(null)}
-        />
-      )}
     </section>
-  );
+  )
 }
-
