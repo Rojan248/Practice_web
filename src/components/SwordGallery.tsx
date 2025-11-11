@@ -174,8 +174,17 @@ export default function SwordGallery() {
   };
 
   return (
-    <section className="py-20 px-4 sm:px-6 lg:px-8" style={{ backgroundColor: '#0A0A0A' }}>
-      <div className="container mx-auto max-w-7xl">
+    <section 
+      className="py-20 px-4 sm:px-6 lg:px-8" 
+      style={{
+        backgroundImage: "url('/images/hero/background-2.jpg')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
+      {/* Background Overlay for Text Readability */}
+      <div className="absolute inset-0 bg-black/60" aria-hidden="true" />
+      <div className="container mx-auto max-w-7xl relative z-10">
         {/* Section Header */}
         <div className="mb-12 text-center">
           <h2 className="font-heading mb-4 text-5xl font-bold text-white">

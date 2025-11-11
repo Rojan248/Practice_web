@@ -32,7 +32,7 @@ const timelineSteps: TimelineStep[] = [
     titleJapanese: '鍛錬',
     description: 'The raw steel is heated and hammered into shape, creating the foundation of the blade through traditional techniques passed down through generations.',
     duration: '2-3 days',
-    image: '/craftsmanship/forging.jpg',
+    image: '/images/hero/forging.jpg',
     icon: <Hammer className="w-6 h-6" />,
   },
   {
@@ -41,7 +41,7 @@ const timelineSteps: TimelineStep[] = [
     titleJapanese: '成形',
     description: 'The blade is carefully shaped and refined, ensuring perfect geometry and balance. Every curve and angle is meticulously crafted.',
     duration: '1-2 days',
-    image: '/craftsmanship/shaping.jpg',
+    image: '/images/hero/shaping.jpg',
     icon: <FileText className="w-6 h-6" />,
   },
   {
@@ -50,7 +50,7 @@ const timelineSteps: TimelineStep[] = [
     titleJapanese: '焼入れ',
     description: 'The blade undergoes heat treatment to achieve optimal hardness and flexibility. This critical step determines the sword\'s cutting ability and durability.',
     duration: '1 day',
-    image: '/craftsmanship/tempering.jpg',
+    image: '/images/hero/tempering.jpg',
     icon: <Flame className="w-6 h-6" />,
   },
   {
@@ -59,7 +59,7 @@ const timelineSteps: TimelineStep[] = [
     titleJapanese: '研磨',
     description: 'Master polishers spend weeks refining the blade\'s surface, revealing the beautiful hamon pattern and creating a mirror-like finish.',
     duration: '2-4 weeks',
-    image: '/craftsmanship/polishing.jpg',
+    image: '/images/hero/polishing.jpg',
     icon: <Sparkles className="w-6 h-6" />,
   },
   {
@@ -68,7 +68,7 @@ const timelineSteps: TimelineStep[] = [
     titleJapanese: '拵',
     description: 'The blade is fitted with a traditional handle, guard, and scabbard. Each component is crafted to complement the blade\'s character.',
     duration: '1-2 weeks',
-    image: '/craftsmanship/mounting.jpg',
+    image: '/images/hero/mounting.jpg',
     icon: <Package className="w-6 h-6" />,
   },
   {
@@ -77,7 +77,7 @@ const timelineSteps: TimelineStep[] = [
     titleJapanese: '仕上げ',
     description: 'Final quality checks and adjustments ensure the sword meets the highest standards. The masterpiece is complete and ready for its owner.',
     duration: '3-5 days',
-    image: '/craftsmanship/finishing.jpg',
+    image: '/images/hero/finishing.jpg',
     icon: <CheckCircle className="w-6 h-6" />,
   },
 ];
@@ -100,10 +100,16 @@ export default function CraftsmanshipTimeline() {
     <section
       ref={containerRef}
       className="relative py-20 px-4 sm:px-6 lg:px-8"
-      style={{ backgroundColor: '#0A0A0A' }}
+      style={{
+        backgroundImage: "url('/images/hero/background-1.jpg')",
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
       aria-label="Craftsmanship timeline"
     >
-      <div className="container mx-auto max-w-7xl">
+      {/* Background Overlay for Text Readability */}
+      <div className="absolute inset-0 bg-black/60" aria-hidden="true" />
+      <div className="container mx-auto max-w-7xl relative z-10">
         {/* Section Header */}
         <div className="mb-16 text-center">
           <h2 className="font-heading mb-4 text-5xl font-bold text-white">
@@ -232,7 +238,7 @@ function TimelineStepCard({ step, isEven }: TimelineStepCardProps) {
         )}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-[#0A0A0A] via-[#1A1A1A] to-[#0A0A0A]" />
-        {step.image && step.image !== '/craftsmanship/forging.jpg' && (
+        {step.image && (
           <Image
             src={step.image}
             alt={`${step.title} - ${step.titleJapanese}`}
